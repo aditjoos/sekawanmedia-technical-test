@@ -1,11 +1,23 @@
-import React, {useState, useEffect} from 'react';
-import {FlatList, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Linking,
+  Button,
+} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {faHouse} from '@fortawesome/free-solid-svg-icons/faHouse';
 import {faUser} from '@fortawesome/free-solid-svg-icons/faUser';
+import {IMAGENAME} from '../MyTestApp/src/image/index';
 
 const styles = StyleSheet.create({
   listTile: {
@@ -34,6 +46,17 @@ const styles = StyleSheet.create({
   postDetailSubtitle: {
     fontSize: 18,
     color: 'black',
+  },
+  imageStyle: {
+    width: 200,
+    height: 200,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  profileTexts: {
+    fontSize: 18,
+    color: 'black',
+    marginBottom: 10,
   },
 });
 
@@ -116,11 +139,67 @@ function PostsScreen() {
   );
 }
 
+type OpenURLButtonProps = {
+  url: string;
+  children: string;
+};
+
+const OpenURLButton = ({url, children}: OpenURLButtonProps) => {
+  const handlePress = useCallback(async () => {
+    // Checking if the link is supported for links with custom URL scheme.
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+      // by some browser in the mobile
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${url}`);
+    }
+  }, [url]);
+
+  return <Button title={children} onPress={handlePress} />;
+};
+
 function ProfileScreen() {
   return (
     // eslint-disable-next-line react-native/no-inline-styles
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text style={{fontSize: 18, color: 'black'}}>Settings</Text>
+    <View style={{paddingLeft: 10, paddingRight: 10}}>
+      <ScrollView>
+        <Image source={IMAGENAME} style={styles.imageStyle} />
+        <Text style={styles.profileTexts}>
+          Perkenalkan nama saya Bagus Aditama Pramana Putra, panggil saya Adit.
+          Saya adalah seorang spesialis pengembangan aplikasi perangkat mobile
+          menggunakan Flutter.
+        </Text>
+        <Text style={styles.profileTexts}>Links:</Text>
+        <View style={{marginBottom: 10}}>
+          <OpenURLButton url="https://aditjoos.github.io">
+            Website Portofolio
+          </OpenURLButton>
+        </View>
+        <View style={{marginBottom: 10}}>
+          <OpenURLButton url="https://github.com/aditjoos">
+            GitHub
+          </OpenURLButton>
+        </View>
+        <View style={{marginBottom: 10}}>
+          <OpenURLButton url="https://instagram.com/aditjoos_">
+            instagram
+          </OpenURLButton>
+        </View>
+        <Text style={styles.profileTexts}>
+          Aplikasi ini merupakan syarat untuk menyelesaikan tahap technical Test pada lowongan posisi Mobile Developer di Sekawan Media.
+        </Text>
+        <Text style={styles.profileTexts}>
+          Source Code aplikasi ini tersedia di:
+        </Text>
+        <View style={{marginBottom: 10}}>
+          <OpenURLButton url="https://github.com/aditjoos/sekawanmedia-technical-test">
+            GitHub Repository
+          </OpenURLButton>
+        </View>
+      </ScrollView>
     </View>
   );
 }
