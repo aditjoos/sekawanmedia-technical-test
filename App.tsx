@@ -154,7 +154,7 @@ const OpenURLButton = ({url, children}: OpenURLButtonProps) => {
       // by some browser in the mobile
       await Linking.openURL(url);
     } else {
-      Alert.alert(`Don't know how to open this URL: ${url}`);
+      Alert.alert(`Exception to open this URL: ${url}`);
     }
   }, [url]);
 
